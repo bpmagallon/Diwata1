@@ -1,0 +1,2 @@
+def footprint(add, attitude):
+    
