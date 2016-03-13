@@ -2,6 +2,7 @@ import bin_read
 import error_catch
 import toa_convert
 import img_save
+import att_comp
 
 def commRead(command):
     commands = []
@@ -45,11 +46,15 @@ def commRead(command):
         split = string.split("-att")
         split = split[1].split(" ")
         attAdd = split[1]
-        error_catch.errCatch(2, attAdd)
+        err = error_catch.errCatch(2, attAdd)
+        if err !=2:
+            attOut = att_comp.attitude(attAdd)
 
     footComm = string.find("-footprint")
     if footComm != -1:
         split = string.split("-footprint")
         split = split[1].split(" ")
         footAdd = split[1]
-        error_catch.errCatch(2, footAdd)
+        err = error_catch.errCatch(2, footAdd)
+        if err !=2:
+            foot_create.footprint(footAdd)
