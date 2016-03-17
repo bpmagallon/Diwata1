@@ -1,5 +1,6 @@
 from numpy import zeros
 from numpy import flipud
+import mfc_reader
 
 def readBin(address):
     image_dn = zeros([504,692], dtype = float)
@@ -12,359 +13,218 @@ def readBin(address):
         temp = int(temp,2)
         return temp
 
-    def binToInt2(astring)
+    def binToInt2(astring):
         temp = ' '.join(format(ord(i),'b').zfill(8) for i in astring)
         temp = temp[0:8]
         temp = int(temp,2)
         return temp
 
     with open(filename, "rb") as f:
-        f.seek(1)
+        f.seek(2)
         payload = f.read(2)
+        payload = binToInt(payload)
+
         if payload == 1:
             payload="SMI-VIS"
-            f.seek(103)
-            vh = f.read(1)
-            vh = binToInt2(vh)
+            f.seek(112)
+            v = f.read(2)
+            v = binToInt(v)
 
-            f.seek(104)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(105)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(106)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
+            f.seek(114)
+            h = f.read(2)
+            h = binToInt(h)
 
             expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
 
-            f.seek(107)
-            gh = f.read(1)
-            gh = binToInt2(gh)
+            f.seek(116)
+            g = f.read(2)
+            g = binToInt(g)
 
-            f.seek(108)
-            gl = f.read(1)
-            gl = binToInt2(gl)
+            gain = g
 
-            gain = (gh*256)+gl 
+            f.seek(150)
+            w = f.read(2)
+            w = binToInt(w)
 
-            f.seek(141)
-            w_h = f.read(1)
-            w_h = binToInt2(1)
-
-            f.seek(142)
-            w_l = f.read(1)
-            w_l = binToInt2(1)
-
-            wavelength = 400+((w_h)*256)+w_l
+            wavelength = 400+w
             
         elif payload == 2:
             payload="SMI-NIR"
-            f.seek(103)
-            vh = f.read(1)
-            vh = binToInt2(vh)
-
-            f.seek(104)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(105)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(106)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
-
-            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
-
-            f.seek(109)
-            gh = f.read(1)
-            gh = binToInt2(gh)
-
-            f.seek(110)
-            gl = f.read(1)
-            gl = binToInt2(gl)
-
-            gain = (gh*256)+gl 
-
-            f.seek(145)
-            w_h = f.read(1)
-            w_h = binToInt2(1)
-
-            f.seek(146)
-            w_l = f.read(1)
-            w_l = binToInt2(1)
-
-            wavelength = 700+((w_h)*256)+w_l
-            
-        elif payload == 2:
-            payload="HPT-R"
-            f.seek(113)
-            vh = f.read(1)
-            vh = binToInt2(vh)
+            f.seek(112)
+            v = f.read(2)
+            v = binToInt(v)
 
             f.seek(114)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(115)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(116)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
+            h = f.read(2)
+            h = binToInt(h)
 
             expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
-
-            f.seek(117)
-            gh = f.read(1)
-            gh = binToInt2(gh)
 
             f.seek(118)
-            gl = f.read(1)
-            gl = binToInt2(gl)
+            g = f.read(2)
+            g = binToInt(g)
 
-            gain = (gh*256)+gl 
+            gain = g
 
-            wavelength = payload
+            f.seek(154)
+            w = f.read(2)
+            w_= binToInt(w)
+
+            wavelength = 700+w
             
-        elif payload == 2:
-            payload="HPT-G"
-            f.seek(113)
-            vh = f.read(1)
-            vh = binToInt2(vh)
-
-            f.seek(114)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(115)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(116)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
-
-            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
-
-            f.seek(119)
-            gh = f.read(1)
-            gh = binToInt2(gh)
-
-            f.seek(120)
-            gl = f.read(1)
-            gl = binToInt2(gl)
-
-            gain = (gh*256)+gl
-            wavelength = payload
-            
-        elif payload == 2:
-            payload="HPT-B"
-            flip = 1
-            f.seek(113)
-            vh = f.read(1)
-            vh = binToInt2(vh)
-
-            f.seek(114)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(115)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(116)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
-
-            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
-
-            f.seek(121)
-            gh = f.read(1)
-            gh = binToInt2(gh)
-
+        elif payload == 3:
+            payload="HPT-R"
             f.seek(122)
-            gl = f.read(1)
-            gl = binToInt2(gl)
-
-            gain = (gh*256)+gl
-            wavelength = payload
-            
-        elif payload == 2:
-            payload="HPT-N"
-            flip = 1
-            f.seek(113)
-            vh = f.read(1)
-            vh = binToInt2(vh)
-
-            f.seek(114)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(115)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(116)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
-
-            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
-
-            f.seek(123)
-            gh = f.read(1)
-            gh = binToInt2(gh)
+            v = f.read(2)
+            v = binToInt(v)
 
             f.seek(124)
-            gl = f.read(1)
-            gl = binToInt2(gl)
-
-            gain = (gh*256)+gl
-            wavelength = payload
-            
-        elif payload == 2:
-            payload="WFC"
-            f.seek(127)
-            vh = f.read(1)
-            vh = binToInt2(vh)
-
-            f.seek(128)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(129)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(130)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
+            h = f.read(2)
+            h = binToInt(h)
 
             expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
 
-            f.seek(131)
-            gh = f.read(1)
-            gh = binToInt2(gh)
+            f.seek(126)
+            g = f.read(2)
+            g = binToInt(g)
+
+            gain = g
+
+            wavelength = payload
+            
+        elif payload == 4:
+            payload="HPT-G"
+            f.seek(122)
+            v = f.read(2)
+            v = binToInt(v)
+ 
+            f.seek(124)
+            h = f.read(2)
+            h = binToInt(h)
+
+            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
+
+            f.seek(128)
+            g = f.read(2)
+            g = binToInt(g)
+
+            gain = g
+            wavelength = payload
+            
+        elif payload == 5:
+            payload="HPT-B"
+            flip = 1
+            f.seek(122)
+            v = f.read(2)
+            v = binToInt(v)
+
+            f.seek(124)
+            h = f.read(2)
+            h = binToInt(h)
+
+            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
+
+            f.seek(130)
+            g = f.read(1)
+            g = binToInt(g)
+
+            gain = g
+            wavelength = payload
+            
+        elif payload == 6:
+            payload="HPT-N"
+            flip = 1
+            f.seek(122)
+            v = f.read(2)
+            v = binToInt(v)
+
+            f.seek(124)
+            h = f.read(2)
+            h = binToInt(h)
+
+            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
 
             f.seek(132)
-            gl = f.read(1)
-            gl = binToInt2(gl)
+            g = f.read(2)
+            g = binToInt(g)
 
-            gain = (gh*256)+gl
+            gain = g
+            wavelength = payload
+            
+        elif payload == 7:
+            payload="WFC"
+            f.seek(136)
+            v = f.read(2)
+            v = binToInt(v)
+
+
+            f.seek(138)
+            h = f.read(2)
+            h= binToInt(h)
+
+            expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
+
+            f.seek(140)
+            g = f.read(1)
+            g = binToInt(g)
+
+            gain = g
             wavelength = "PANCHROMATIC"
             
         else:
             payload="MFC"
-            f.seek(135)
-            vh = f.read(1)
-            vh = binToInt2(vh)
+            f.seek(144)
+            v = f.read(2)
+            v = binToInt(v)
 
-            f.seek(136)
-            vl = f.read(1)
-            vl = binToInt2(vl)
-
-            v = (vh*256)+vl
-
-            f.seek(137)
-            hh = f.read(1)
-            hh = binToInt2(hh)
-
-
-            f.seek(138)
-            hl = f.read(1)
-            hl = binToInt2(hl)
-            
-            h = (hh*256)+hl
+            f.seek(146)
+            h = f.read(2)
+            h = binToInt(h)
 
             expT = (0.03337*v)+(524-h)*(0.00006356)+(487/780)*(0.00006356)
 
-            f.seek(139)
-            gh = f.read(1)
-            gh = binToInt2(gh)
+            f.seek(148)
+            g = f.read(2)
+            g = binToInt(g)
 
-            f.seek(140)
-            gl = f.read(1)
-            gl = binToInt2(gl)
-
-            gain = (gh*256)+gl
+            gain = g
             wavelength = "COLOURED"
             
-        f.seek(85)
+        f.seek(94)
         year = f.read(1)
         year = 2000+binToInt2(year)
         
-        f.seek(86)
+        f.seek(95)
         month = f.read(1)
         month = binToInt2(month)
 
-        f.seek(87)
+        f.seek(96)
         day = f.read(1)
         day = binToInt2(day)
 
-        f.seek(88)
+        f.seek(97)
         hour = f.read(1)
         hour = binToInt2(hour)
 
-        f.seek(89)
+        f.seek(98)
         minute = f.read(1)
         minute = binToInt2(minute)
 
-        f.seek(90)
+        f.seek(99)
         sec = f.read(1)
         sec = binToInt2(sec)
 
-        f.seek(91)
+        f.seek(100)
         msec = f.read(1)
         msec = float(binToInt2(msec))/100
 
-        f.seek(92)
+        f.seek(101)
         misec = f.read(1)
-        misec = float(binToInt2(misec)/10000
+        misec = float(binToInt2(misec))/10000
 
-        captime = str(year)+"/"+str(month)+"/"+str(day)+"/"+str(hour)+":"+str(minute)+":"+(str(sec+msec+misec))
+        captime = str(year)+"/"+str(month)+"/"+str(day)+"/"+str(hour)+":"+str(minute)+":"+(str(((float(sec))+msec+misec)))
         
-        f.seek(199) #start ng image data after header
+        f.seek(200) #start ng image data after header
         for i in range(0,504):
             for j in range(0,692):
                 data = f.read(2)
@@ -376,8 +236,11 @@ def readBin(address):
         image_dn = flipud(image_dn)
     else:
         pass
-
+   
     if payload=="MFC":
-        image_dn = forMFC(image_dn)
-        
-    return image_dn, payload, captime, gain, expT, wavelenght
+        image_dn = mfc_reader.forMFC(image_dn)
+    print "Payload: "+payload
+    print "Capture Time:"+str(captime)
+    print "Gain:"+str(gain)
+    print "Exposure Time:"+str(expT)+" s"
+    return image_dn, payload, captime, gain, expT, wavelength
