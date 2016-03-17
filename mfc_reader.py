@@ -19,14 +19,14 @@ def forMFC(array):
         for j in range(col):
             if (i%2==0):
                 if(j%2==0):
-                    red[count_red_row][count_red_col] = (data[i][j])
+                    red[count_red_row][count_red_col] = (array[i][j])
                     count_red_col+=1
                 if(j%2>0):
-                    green[count_green_row][count_green_col] = (data[i][j])
+                    green[count_green_row][count_green_col] = (array[i][j])
                     count_green_col+=1
             if (i%2>0):
                 if(j%2>0):
-                    blue[count_blue_row][count_blue_col] = (data[i][j])
+                    blue[count_blue_row][count_blue_col] = (array[i][j])
                     count_blue_col+=1
 
         count_red_col=0
@@ -39,7 +39,7 @@ def forMFC(array):
             count_red_row+=1
             count_green_row+=1
 
-    rgbArray = np.zeros((252,346,3), 'uint8')
+    rgbArray = np.zeros((252,346,3), dtype=np.int)
     rgbArray[..., 0] = red
     rgbArray[..., 1] = green
     rgbArray[..., 2] = blue
