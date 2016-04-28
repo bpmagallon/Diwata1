@@ -68,7 +68,7 @@ def readBin(address):
 
             f.seek(154)
             w = f.read(2)
-            w_= binToInt(w)
+            w = binToInt(w)
 
             wavelength = 700+w
             
