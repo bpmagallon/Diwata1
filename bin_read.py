@@ -24,7 +24,7 @@ def readBin(address):
     #computes exposure time depending on the shutter mode (smd)
     def expTime(smd, v, h):
 
-        if smd==1 or smd==3:
+        if smd==0 or smd==2:
             exposureTime = (v*525+h)*0.00006356
         else:
             exposureTime = (0.03337*v)+(524-h)*(0.00006356)+(float(487)/float(780))*(0.00006356)
@@ -68,10 +68,10 @@ def readBin(address):
             if payload==1:
                 payload="SMI-VIS"
                 #wavelength used
-                f.seek(shift+153)
-                w = f.read(1)
-                w = unpack(">B",w)[0]
-                wavelength = 400+w
+                f.seek(shift+152)
+                w = f.read(2)
+                w = unpack(">H",w)[0] 
+                wavelength = 400+ (w-16384)
 
                 #smi gain
                 f.seek(shift+116)
@@ -81,10 +81,10 @@ def readBin(address):
             else:
                 payload="SMI-NIR"
                 #wavelength used
-                f.seek(shift+157)
-                w = f.read(1)
-                w = unpack(">B",w)[0]
-                wavelength = 700+w
+                f.seek(shift+156)
+                w = f.read(2)
+                w = unpack(">H",w)[0]
+                wavelength = 730+ (w-16384)
 
                 #smi gain
                 f.seek(shift+118)
@@ -195,6 +195,7 @@ def readBin(address):
             gain = unpack(">H",gain)[0]
             wavelength = "COLOURED"
 
+        print payload
         #image capture time
         f.seek(shift+94)
         year = f.read(1)
@@ -232,8 +233,8 @@ def readBin(address):
         
         f.seek(shift+200) #start ng image data after header
         data = f.read(504*692*2)
-        data = array(unpack(">"+"H"*(504*692),data)).reshape(504, 692)
-        image_dn = data        
+        data = array(unpack(">"+"H"*(504*692),data)).reshape(504,692)
+        image_dn = data
         
     print "Bin file from: "+payload
 
